@@ -60,3 +60,26 @@ uv run mkdocs serve
 
 # Track data with DVC
 uv run dvc add data/raw_dataset.csv
+
+
+## File structure
+
+my-ml-project/
+├── .devcontainer/
+│   └── devcontainer.json    # Dev container settings & recommended IDE extensions
+├── .github/
+│   └── workflows/           # Target directory for CI/CD automation pipelines
+├── .dvc/                    # DVC metadata, configuration, and cache pointers
+├── data/                    # Storage for raw/processed datasets (tracked by DVC)
+│   └── .gitkeep
+├── docs/                    # Technical documentation sources
+│   └── index.md             # Documentation home page
+├── src/                     # Source package root workspace
+│   └── my_ml_project/
+│       └── __init__.py
+├── tests/                   # Pytest test suite directory
+├── .gitignore               # Ignores build artifacts, caches, virtualenvs, & raw data
+├── .pre-commit-config.yaml  # Pre-commit hook rules (Ruff lint/format & DVC checks)
+├── mkdocs.yml               # MkDocs engine & theme configuration file
+├── pyproject.toml           # Project metadata & dependency definitions
+└── uv.lock                  # Deterministic dependency lockfile
