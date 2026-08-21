@@ -10,6 +10,7 @@ Run the bootstrapper script followed by your project name:
 
 ```bash
 python init_project.py my-ml-project
+```
 
 ## 🛠️ Setup Steps Breakdown
 
@@ -60,7 +61,7 @@ uv run mkdocs serve
 
 # Track data with DVC
 uv run dvc add data/raw_dataset.csv
-
+```
 
 ## File structure
 
