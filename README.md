@@ -64,7 +64,7 @@ uv run dvc add data/raw_dataset.csv
 ```
 
 ## File structure
-
+```bash
 my-ml-project/
 ├── .devcontainer/
 │   └── devcontainer.json    # Dev container settings & recommended IDE extensions
@@ -84,3 +84,4 @@ my-ml-project/
 ├── mkdocs.yml               # MkDocs engine & theme configuration file
 ├── pyproject.toml           # Project metadata & dependency definitions
 └── uv.lock                  # Deterministic dependency lockfile
+```
