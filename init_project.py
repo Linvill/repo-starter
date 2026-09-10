@@ -3,6 +3,11 @@ import sys
 import subprocess
 from pathlib import Path
 
+# Ensure UTF-8 output on Windows
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+
 project_name = sys.argv[1] if len(sys.argv) > 1 else "my-ml-project"
 project_dir = Path(project_name)
 
@@ -21,7 +26,7 @@ subprocess.run([
 ], check=True)
 
 # 3. Create directory layout
-for d in [".devcontainer", ".github/workflows", "data", "docs", "tests"]:
+for d in [".devcontainer", ".github/workflows", "data", "docs", "tests", ".github/instructions"]:
     Path(d).mkdir(parents=True, exist_ok=True)
 
 # 4. Generate .devcontainer/devcontainer.json
@@ -98,7 +103,72 @@ site/
 with open(".gitignore", "a", encoding="utf-8") as f:
     f.write(gitignore)
 
-# 9. Install pre-commit hooks
+# 9. Generate .cursorrules (tool-agnostic AI instructions; also picked up by Claude, Copilot, etc.)
+cursorrules = """# .cursorrules
+
+This file provides guidance to AI assistants (Cursor, Copilot, Claude Code) when working with this project.
+
+## Project type
+
+This is a Python **data science / ML project** using:
+- **uv** for fast Python package management
+- **pytest** for testing
+- **ruff** for linting & formatting (single tool for all style checks)
+- **DVC** for data versioning
+- **MkDocs** for documentation
+- **Pre-commit hooks** for automated checks before commit
+
+## How to work with this repo
+
+1. **Setup:** Run `uv sync --locked` to install all dependencies into the local virtual environment
+2. **Development:** Use `uv run pytest` to test, `uv run ruff check --fix` to lint
+3. **Pre-commit:** Hooks auto-run on `git commit`; never force-skip them
+4. **Documentation:** Add docstrings (Google or NumPy style) — they feed mkdocstrings
+5. **Data:** Version large files with DVC; commit `.dvc` files to git
+
+## Code style conventions
+
+- Use **type hints** (PEP 484)
+- Keep functions small and focused
+- Write docstrings on public functions/classes
+- Run ruff & pytest before pushing commits
+
+## When to ask for clarification
+
+- Should this project use a different ML framework?
+- Do you want example notebooks or starter code?
+- Should we add mypy (static type checking) or other tools?
+"""
+Path(".cursorrules").write_text(cursorrules, encoding="utf-8")
+
+# 10. Optionally generate CLAUDE.md (Anthropic-specific; complements .cursorrules)
+claude_md = f"""# CLAUDE.md
+
+Guidance for Claude (and Claude Code) when working with **{project_name}**.
+
+This project was bootstrapped by `repo-starter` with a complete data science setup.
+
+## Quick context
+
+- **Environment:** Python 3.12, managed by `uv`
+- **Testing:** `uv run pytest tests/`
+- **Linting:** `uv run ruff check --fix` (replaces black, flake8, isort)
+- **Docs:** MkDocs + Material theme; view with `mkdocs serve`
+- **Data:** Use DVC for anything large; commit `.dvc` files to git
+- **Pre-commit:** Enforced before commit; don't bypass
+
+## When helping with code
+
+- Assume we want clean, type-hinted Python
+- Suggest tests alongside code
+- Keep module responsibilities clear
+- Prefer small, composable functions
+
+For more detail, see `.cursorrules` (the canonical AI instruction file for this project).
+"""
+Path("CLAUDE.md").write_text(claude_md, encoding="utf-8")
+
+# 11. Install pre-commit hooks
 subprocess.run(["uv", "run", "pre-commit", "install"], check=True)
 
 print(f"✅ Project successfully bootstrapped in ./{project_name}!")
